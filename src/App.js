@@ -3,6 +3,9 @@ import './App.css';
 
 import React, { useState, useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase-config'; // Import Firebase auth
+import AuthProvider from './context/AuthProvider';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -16,51 +19,70 @@ import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
 import PrivateLayout from './components/PrivateLayout';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Layout />, // Public layout with Header, etc.
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'login',
-        element: <PublicRoute><LoginPage /></PublicRoute>,
-      },
-      {
-        path: 'register',
-        element: <PublicRoute><RegisterPage /></PublicRoute>,
-      },
-      {
-        path: 'dashboard',
-        element: <PrivateRoute><PrivateLayout><DashboardPage /></PrivateLayout></PrivateRoute>,
-      },
-      {
-        path: 'bookmarked',
-        element: <PrivateRoute><PrivateLayout><BookmarkedPage /></PrivateLayout></PrivateRoute>,
-      },
-      {
-        path: 'projects',
-        element: <PrivateRoute><PrivateLayout><ProjectsPage /></PrivateLayout></PrivateRoute>,
-      },
-      {
-        path: 'trash',
-        element: <PrivateRoute><PrivateLayout><TrashPage /></PrivateLayout></PrivateRoute>,
-      },
-      {
-        path: '*',
-        element: <ErrorPage />,
-      },
-    ],
-  },
-]);
-
 function App() {
+  const [user, setUser] = useState(null); // Track the current user
+  const [loading, setLoading] = useState(true); // Track if the auth state is still being checked
+
+  useEffect(() => {
+    // Listen to auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false); // Stop loading once the auth state is resolved
+    });
+
+    return () => unsubscribe(); // Cleanup on unmount
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading indicator or blank screen while waiting for auth state
+  }
+
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <Layout />, // Public layout with Header, etc.
+      children: [
+        {
+          index: true,
+          element: <HomePage />,
+        },
+        {
+          path: 'login',
+          element: <PublicRoute user={user}><LoginPage /></PublicRoute>,
+        },
+        {
+          path: 'register',
+          element: <PublicRoute user={user}><RegisterPage /></PublicRoute>,
+        },
+        {
+          path: 'dashboard',
+          element: <PrivateRoute user={user}><PrivateLayout><DashboardPage /></PrivateLayout></PrivateRoute>,
+        },
+        {
+          path: 'bookmarked',
+          element: <PrivateRoute user={user}><PrivateLayout><BookmarkedPage /></PrivateLayout></PrivateRoute>,
+        },
+        {
+          path: 'projects',
+          element: <PrivateRoute user={user}><PrivateLayout><ProjectsPage /></PrivateLayout></PrivateRoute>,
+        },
+        {
+          path: 'trash',
+          element: <PrivateRoute user={user}><PrivateLayout><TrashPage /></PrivateLayout></PrivateRoute>,
+        },
+        {
+          path: '*',
+          element: <ErrorPage />,
+        },
+      ],
+    },
+  ]);
+
   return (
     <div className="App">
+      <AuthProvider>
       <RouterProvider router={router} />
+      </AuthProvider>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../firebase-config.js';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 import styles from '../styles/Header.module.css';
@@ -26,12 +26,6 @@ const Header = () => {
         <div>
           {/* Go Back to Dashboard */}
           <GiHamburgerMenu onClick={() => setShowNav(!showNav)} />
-          <nav>
-            {/* Profile Button */}
-            <Link to="/profile">
-              <button>Profile</button>
-            </Link>
-          </nav>
         </div>
       ) : (
         <div>

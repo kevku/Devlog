@@ -28,7 +28,9 @@ const Sidebar = () => {
       </div>
       <div className='user'>
         {/* Profile Image */}
-        <p>Username</p>
+        <Link to="/profile">
+          <p>Username</p>
+        </Link>
       </div>
       <ul>
         <li>
