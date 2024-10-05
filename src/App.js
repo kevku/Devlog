@@ -9,6 +9,7 @@ import AuthProvider from './context/AuthProvider';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import SetUsernamePage from './pages/SetUsernamePage';
 import DashboardPage from './pages/DashboardPage';
 import BookmarkedPage from './pages/BookmarkedPage';
 import ProjectsPage from './pages/ProjectsPage';
@@ -55,20 +56,24 @@ function App() {
           element: <PublicRoute user={user}><RegisterPage /></PublicRoute>,
         },
         {
+          path: 'set-username', // New route for setting the username
+          element: <PrivateRoute user={user}><SetUsernamePage /></PrivateRoute>,
+        },
+        {
           path: 'dashboard',
-          element: <PrivateRoute user={user}><PrivateLayout><DashboardPage /></PrivateLayout></PrivateRoute>,
+          element: <PrivateRoute user={user}><PrivateLayout user={user}><DashboardPage /></PrivateLayout></PrivateRoute>,
         },
         {
           path: 'bookmarked',
-          element: <PrivateRoute user={user}><PrivateLayout><BookmarkedPage /></PrivateLayout></PrivateRoute>,
+          element: <PrivateRoute user={user}><PrivateLayout user={user}><BookmarkedPage /></PrivateLayout></PrivateRoute>,
         },
         {
           path: 'projects',
-          element: <PrivateRoute user={user}><PrivateLayout><ProjectsPage /></PrivateLayout></PrivateRoute>,
+          element: <PrivateRoute user={user}><PrivateLayout user={user}><ProjectsPage /></PrivateLayout></PrivateRoute>,
         },
         {
           path: 'trash',
-          element: <PrivateRoute user={user}><PrivateLayout><TrashPage /></PrivateLayout></PrivateRoute>,
+          element: <PrivateRoute user={user}><PrivateLayout user={user}><TrashPage /></PrivateLayout></PrivateRoute>,
         },
         {
           path: '*',

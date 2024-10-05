@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase-config'; 
 
-const Sidebar = () => {
+const Sidebar = ({ username }) => {
   const [isActive, setIsActive] = useState(true);
 
   // Handle user sign out
@@ -29,7 +29,7 @@ const Sidebar = () => {
       <div className='user'>
         {/* Profile Image */}
         <Link to="/profile">
-          <p>Username</p>
+          <p>{username}</p>
         </Link>
       </div>
       <ul>

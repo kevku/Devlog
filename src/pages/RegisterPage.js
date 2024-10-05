@@ -3,6 +3,8 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase-config.js';
 import { useNavigate } from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'; // Import Firestore functions
+import { db } from '../firebase-config.js'; // Ensure you have initialized Firestore
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
@@ -23,9 +25,25 @@ const RegisterPage = () => {
 
     try {
       // Create a new user with Firebase Authentication
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user; // Get the created user
+
+      // Prepare user data to store in Firestore
+      const userData = {
+        username: null, // Set to null for now, will be set later
+        email: user.email,
+        isAdmin: false, // Default value
+        createdAt: serverTimestamp(), // Set the createdAt timestamp
+        favorites: [], // Initialize an empty array for favorites
+        projects: [], // Initialize an empty array for projects
+        trash: [] // Initialize an empty array for the trash list
+      };
+
+      // Store the user data in Firestore
+      await setDoc(doc(db, 'users', user.uid), userData); // Use the user ID as the document ID
+
       // Redirect to dashboard or login page after successful registration
-      navigate('/dashboard');
+      navigate('/set-username');
     } catch (err) {
       setError(err.message);
     }
@@ -37,7 +55,21 @@ const RegisterPage = () => {
       const result = await signInWithPopup(auth, provider);
       // User info and token available in result
       console.log(result.user);
-      navigate('/dashboard');
+      
+      // Prepare user data to store in Firestore if user is new
+      const userData = {
+        username: null, // Set to null for now, will be set later
+        email: result.user.email,
+        isAdmin: false, // Default value
+        createdAt: serverTimestamp(), // Set the createdAt timestamp
+        favorites: [], // Initialize an empty array for favorites
+        projects: [], // Initialize an empty array for projects
+        trash: [] // Initialize an empty array for the trash list
+      };
+
+      // Store the user data in Firestore if the user is new
+      await setDoc(doc(db, 'users', result.user.uid), userData, { merge: true }); // Merge to avoid overwriting existing data
+      navigate('/set-username');
     } catch (error) {
       setError(error.message);
     }
