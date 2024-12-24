@@ -8,6 +8,14 @@
   transition: all 1s;
 }
 
+.icons {
+  font-size: 2em;
+}
+
+.navItem {
+  font-size: large;
+}
+
 .active {
   left: 0;
 }
@@ -34,4 +42,3 @@ ul li a:hover,
 ul li a.active {
   background-color: rgb(30, 30, 30);
 }
-

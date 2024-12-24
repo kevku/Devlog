@@ -8,6 +8,10 @@ const PrivateLayout = ({ user }) => { // Accept user as a prop
   const [loading, setLoading] = useState(true); // State to manage loading
   const [usernameExists, setUsernameExists] = useState(true); // State to check if username exists
   const [username, setUsername] = useState(''); // State to store the username
+  const [activeSidebar, setActiveSidebar] = useState(true);
+  const toggleSidebar = () => {
+    setActiveSidebar(prevState => !prevState); // Toggle the sidebar state
+  };
 
   useEffect(() => {
     const checkUsernameExists = async () => {
@@ -44,7 +48,7 @@ const PrivateLayout = ({ user }) => { // Accept user as a prop
 
   return (
     <div className="private-layout">
-      <Sidebar username={username} /> {/* Pass username as a prop to Sidebar */}
+      <Sidebar username={username} activeSidebar={activeSidebar} toggleSidebar={toggleSidebar} /> {/* Pass username as a prop to Sidebar */}
       <div className="main-content">
         <Outlet /> {/* Renders the matched private route content */}
       </div>

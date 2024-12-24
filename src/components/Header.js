@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { auth } from '../firebase-config.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { useSidebar } from './SideBarContext.js';
 
 import styles from '../styles/Header.module.css';
 
 const Header = () => {
   const [user, setUser] = useState(null);
-  const [showNav, setShowNav] = useState(false);
+  const { toggleSidebar } = useSidebar();
 
   // Listen to authentication state
   useEffect(() => {
@@ -25,7 +26,7 @@ const Header = () => {
       {user ? (
         <div>
           {/* Go Back to Dashboard */}
-          <GiHamburgerMenu onClick={() => setShowNav(!showNav)} />
+          <GiHamburgerMenu onClick={toggleSidebar} />
         </div>
       ) : (
         <div>

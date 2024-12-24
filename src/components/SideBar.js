@@ -3,10 +3,17 @@ import styles from '../styles/Sidebar.module.css';
 import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase-config'; 
+import { MdDashboard } from "react-icons/md";
+import { MdPentagon } from "react-icons/md";
+import { MdFolder } from "react-icons/md";
+import { MdFolderSpecial } from "react-icons/md";
+import { BsFillTrashFill } from "react-icons/bs";
+import { MdSettings } from "react-icons/md";
+import { RiLogoutBoxFill } from "react-icons/ri";
+import { useSidebar } from './SideBarContext';
 
 const Sidebar = ({ username }) => {
-  const [isActive, setIsActive] = useState(true);
-
+  const { activeSidebar } = useSidebar(); // Access sidebar state
   // Handle user sign out
   const handleLogout = async (e) => {
     e.preventDefault(); // Prevents the default behavior of the <a> tag
@@ -19,10 +26,10 @@ const Sidebar = ({ username }) => {
   };
 
   return (
-    <div className={`${styles.sidebar} ${isActive ? styles.active : ''}`}>
+    <div className={`${styles.sidebar} ${activeSidebar ? styles.active : ''}`}>
       <div className='top'>
         <div className='logo'>
-          <i className='bx bxl-codepen'></i>
+          <MdPentagon className={styles.icons} />
           <span>Devlog</span>
         </div>
       </div>
@@ -35,38 +42,38 @@ const Sidebar = ({ username }) => {
       <ul>
         <li>
           <Link to="/dashboard">
-            <i className='bx bx-grid-alt'></i>
-            <span className='nav-item'>Dashboard</span>
+            <MdDashboard className={styles.icons} />
+            <span className={styles.navItem}>Dashboard</span>
           </Link>
         </li>
         <li>
           <Link to="/projects">
-            <i className='bx bx-folder'></i>
-            <span className='nav-item'>Projects</span>
+            <MdFolder className={styles.icons} />
+            <span className={styles.navItem}>Projects</span>
           </Link>
         </li>
         <li>
           <Link to="/bookmarked">
-            <i className='bx bxs-star'></i>
-            <span className='nav-item'>Favorites</span>
+            <MdFolderSpecial className={styles.icons} />
+            <span className={styles.navItem}>Favorites</span>
           </Link>
         </li>
         <li>
           <Link to="/trash">
-            <i className='bx bx-trash alt'></i>
-            <span className='nav-item'>Trash</span>
+            <BsFillTrashFill className={styles.icons} />
+            <span className={styles.navItem}>Trash</span>
           </Link>
         </li>
         <li>
           <Link to="/settings">
-            <i className='bx bx-cog'></i>
-            <span className='nav-item'>Settings</span>
+            <MdSettings className={styles.icons} />
+            <span className={styles.navItem}>Settings</span>
           </Link>
         </li>
         <li>
           <a href="#" onClick={handleLogout}>
-            <i className='bx bx-log-out'></i>
-            <span className='nav-item'>Logout</span>
+            <RiLogoutBoxFill className={styles.icons}/>
+            <span className={styles.navItem}>Logout</span>
           </a>
         </li>
       </ul>

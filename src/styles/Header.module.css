@@ -6,6 +6,7 @@ header div {
 header svg {
   font-size: 40px;
   margin: 10px 15px;
+  cursor: pointer;
 }
 
 nav {

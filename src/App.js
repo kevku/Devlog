@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase-config'; // Import Firebase auth
 import AuthProvider from './context/AuthProvider';
+import { SidebarProvider } from './components/SideBarContext';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -41,7 +42,11 @@ function App() {
   const router = createBrowserRouter([
     {
       path: '/',
-      element: <Layout />, // Public layout with Header, etc.
+      element: (
+        <SidebarProvider>
+        <Layout />
+        </SidebarProvider>
+      ), // Public layout with Header, etc.
       children: [
         {
           index: true,
