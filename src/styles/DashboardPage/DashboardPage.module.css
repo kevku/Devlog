@@ -1,0 +1,79 @@
+/* Dashboard.module.css */
+
+/* Flex container for prompts */
+/* Flex container for prompts */
+.promptGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  /* Auto-fit items with a minimum width of 200px */
+  gap: 4.5em;
+  /* Space between items */
+  justify-items: stretch;
+  /* Ensure items stretch to fill available space */
+  padding: 16px;
+  /* Padding inside the container */
+  background-color: #f9f9f9;
+  
+  max-height: 85vh;
+  /* Adjust this value to the desired max height */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  overflow-x: hidden;
+  /* Prevent horizontal overflow */
+}
+
+
+/* Individual prompt item styled like a thumbnail */
+.prompt {
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  height: 180px;
+  /* Fixed height for the thumbnail */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.prompt:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.promptTitle {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.promptDescription {
+  font-size: 14px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  display: none;
+}
+
+.prompt:hover .deleteButton {
+  display: block;
+}

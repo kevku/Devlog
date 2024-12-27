@@ -2,10 +2,10 @@
   width: 240px;
   background-color: rgb(95, 95, 95);
   position: absolute;
-  left: -100%;
+  left: -50%;
   height: 93vh;
   padding: 0 30px;
-  transition: all 1s;
+  transition: all 1s ease;
 }
 
 .icons {
