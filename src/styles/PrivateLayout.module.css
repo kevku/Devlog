@@ -1,0 +1,21 @@
+.privateLayout {
+  display: flex;
+  position: relative;
+}
+
+.mainContent {
+  flex-grow: 1;
+  transition: all 1s ease;
+  /* Smooth transition for content */
+  padding: 20px;
+}
+
+.withSidebar {
+  margin-left: 240px;
+  /* Shift content when sidebar is active */
+}
+
+.noSidebar {
+  margin-left: 0px;
+  /* No shift when sidebar is hidden */
+}

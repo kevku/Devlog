@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom'; // Import Navigate for redirection
+import { Navigate } from 'react-router-dom'; // Import Navigate for redirection
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '../firebase-config'; // Import your Firestore instance
 import Sidebar from './SideBar';
+import styles from '../styles/PrivateLayout.module.css';
+import { useSidebar } from './SideBarContext';
 
-const PrivateLayout = ({ user }) => { // Accept user as a prop
+const PrivateLayout = ({ user, children }) => { // Accept user as a prop
   const [loading, setLoading] = useState(true); // State to manage loading
   const [usernameExists, setUsernameExists] = useState(true); // State to check if username exists
   const [username, setUsername] = useState(''); // State to store the username
-  const [activeSidebar, setActiveSidebar] = useState(true);
-  const toggleSidebar = () => {
-    setActiveSidebar(prevState => !prevState); // Toggle the sidebar state
-  };
-
+  const { activeSidebar } = useSidebar();
   useEffect(() => {
     const checkUsernameExists = async () => {
       if (user && user.uid) { // Check if user and uid are available
@@ -48,9 +46,9 @@ const PrivateLayout = ({ user }) => { // Accept user as a prop
 
   return (
     <div className="private-layout">
-      <Sidebar username={username} activeSidebar={activeSidebar} toggleSidebar={toggleSidebar} /> {/* Pass username as a prop to Sidebar */}
-      <div className="main-content">
-        <Outlet /> {/* Renders the matched private route content */}
+      <Sidebar username={username} />
+      <div className={`${styles.mainContent} ${activeSidebar ? styles.withSidebar : styles.noSidebar}`}>
+        { children }
       </div>
     </div>
   );
