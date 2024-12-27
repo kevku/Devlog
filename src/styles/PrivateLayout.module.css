@@ -7,7 +7,7 @@
   flex-grow: 1;
   transition: all 1s ease;
   /* Smooth transition for content */
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 
 .withSidebar {

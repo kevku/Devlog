@@ -27,15 +27,19 @@ const DashboardPage = () => {
   return (
     <div>
       <button onClick={handleCreatePrompt}>New Prompt</button>
-      <div className={styles.promptGrid}>
-        {prompts.map((prompt) => (
-          <Prompt
-            key={prompt.id}
-            prompt={prompt}
-            onClick={handlePromptClick}
-            onDelete={handleDeletePrompt}
-          />
-        ))}
+      <div className={prompts.length === 0 ? styles.noPrompt : styles.promptGrid}>
+        {prompts.length === 0 ? (
+          <h2>Create Some Logs!</h2>
+        ) : (
+          prompts.map((prompt) => (
+            <Prompt
+              key={prompt.id}
+              prompt={prompt}
+              onClick={handlePromptClick}
+              onDelete={handleDeletePrompt}
+            />
+          ))
+        )}
       </div>
     </div>
   );

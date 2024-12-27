@@ -1,7 +1,6 @@
 /* Dashboard.module.css */
 
 /* Flex container for prompts */
-/* Flex container for prompts */
 .promptGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -13,13 +12,16 @@
   padding: 16px;
   /* Padding inside the container */
   background-color: #f9f9f9;
-  
+
   max-height: 85vh;
   /* Adjust this value to the desired max height */
   overflow-y: auto;
   /* Enable vertical scrolling */
   overflow-x: hidden;
   /* Prevent horizontal overflow */
+
+  margin-top: 20px;
+  border-radius: 20px;
 }
 
 
