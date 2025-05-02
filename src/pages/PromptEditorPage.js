@@ -17,6 +17,7 @@ const PromptEditorPage = () => {
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [showPreviewOnly, setShowPreviewOnly] = useState(false);
   const [lastListType, setLastListType] = useState(null);
   const [lastListTime, setLastListTime] = useState(0);
 
@@ -54,6 +55,14 @@ const PromptEditorPage = () => {
         }, 0);
       }
     }
+  };
+
+  // Add this helper function
+  const updateScrollPosition = (textarea, cursorPosition) => {
+    const lineHeight = parseInt(getComputedStyle(textarea).lineHeight);
+    const totalLines = textarea.value.substr(0, cursorPosition).split('\n').length;
+    const scrollPosition = (totalLines * lineHeight) - (textarea.clientHeight / 2);
+    textarea.scrollTop = Math.max(0, scrollPosition);
   };
 
   const insertMarkdown = (type) => {
@@ -117,6 +126,15 @@ const PromptEditorPage = () => {
       setTimeout(() => {
         textarea.focus();
         textarea.setSelectionRange(newCursorPos, newCursorPos + 4);
+        updateScrollPosition(textarea, newCursorPos);
+      }, 0);
+    } else {
+      // When there is a selection, move cursor to the end of the inserted content
+      const newCursorPos = start + prefix.length + selection.length + suffix.length;
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+        updateScrollPosition(textarea, newCursorPos);
       }, 0);
     }
 
@@ -174,14 +192,56 @@ const PromptEditorPage = () => {
         <button onClick={() => insertMarkdown('quote')}><MdFormatQuote /></button>
         <div className={styles.divider} />
         <button 
-          onClick={() => setShowPreview(!showPreview)}
-          className={`${styles.previewButton} ${showPreview ? styles.active : ''}`}
+          onClick={() => {
+            setShowPreview(!showPreview);
+            if (showPreviewOnly) {
+              setShowPreviewOnly(false);
+            }
+          }}
+          data-active={showPreview}
+          title="Side-by-side preview"
         >
           <MdPreview />
+        </button>
+        <button 
+          onClick={() => {
+            setShowPreviewOnly(!showPreviewOnly);
+            setShowPreview(false);
+          }}
+          data-active={showPreviewOnly}
+          title="Preview only"
+        >
+          <MdPreview style={{ transform: 'scale(1.2)' }} />
         </button>
       </div>
 
       <div className={`${styles.editorWrapper} ${showPreview ? styles.split : ''}`}>
+        <div className={`${styles.previewOnly} ${showPreviewOnly ? styles.active : ''}`}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              code({node, inline, className, children, ...props}) {
+                const match = /language-(\w+)/.exec(className || '');
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    style={vscDarkPlus}
+                    language={match[1]}
+                    PreTag="div"
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              }
+            }}
+          >
+            {preprocessMarkdown(content)}
+          </ReactMarkdown>
+        </div>
         <textarea
           id="editor"
           value={content}
@@ -189,8 +249,9 @@ const PromptEditorPage = () => {
           onKeyDown={handleKeyDown}
           placeholder="Write your content here... (Markdown supported)"
           className={styles.editor}
+          style={{ display: showPreviewOnly ? 'none' : 'block' }}
         />
-        {showPreview && (
+        {showPreview && !showPreviewOnly && (
           <div className={styles.preview}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}

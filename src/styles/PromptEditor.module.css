@@ -55,6 +55,11 @@
   color: #fff;
 }
 
+.toolbar button[data-active="true"] {
+  background-color: #2196f3;
+  color: #fff;
+}
+
 .divider {
   width: 1px;
   height: 24px;
@@ -85,7 +90,7 @@
   min-height: 0; /* Allow flex item to shrink */
 }
 
-.editor, .preview {
+.editor, .preview, .previewOnly.active {
   /* Webkit browsers (Chrome, Safari, newer Edge) */
   &::-webkit-scrollbar {
     width: 8px;
@@ -194,6 +199,25 @@
   line-height: 1.6;
   display: list-item; /* Ensure items are displayed as list items */
   color: var(--text-color); /* Use the text color for list text */
+}
+
+.previewOnly {
+  display: none;
+}
+
+.previewOnly.active {
+  display: block;
+  flex: 1;
+  padding: 20px;
+  background-color: #1a1a1a;
+  border-radius: 0 0 8px 8px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.previewOnly.active + .editor,
+.previewOnly.active + .preview {
+  display: none;
 }
 
 .header {
