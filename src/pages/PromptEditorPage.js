@@ -8,7 +8,8 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { 
   MdFormatBold, MdFormatItalic, MdFormatListBulleted, 
   MdFormatListNumbered, MdCode, MdLink, MdImage,
-  MdFormatQuote, MdPreview, MdTitle, MdArrowBack
+  MdFormatQuote, MdPreview, MdTitle, MdArrowBack,
+  MdFullscreen // Add this import
 } from 'react-icons/md';
 
 const PromptEditorPage = () => {
@@ -209,9 +210,9 @@ const PromptEditorPage = () => {
             setShowPreview(false);
           }}
           data-active={showPreviewOnly}
-          title="Preview only"
+          title="Full screen preview"
         >
-          <MdPreview style={{ transform: 'scale(1.2)' }} />
+          <MdFullscreen />
         </button>
       </div>
 

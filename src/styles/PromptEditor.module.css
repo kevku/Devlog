@@ -121,11 +121,10 @@
   border-radius: 0 0 0 8px;
 }
 
-.preview {
+.preview, .previewOnly.active {
   flex: 1;
   padding: 20px;
   background-color: #1a1a1a;
-  border-radius: 0 0 8px 0;
   overflow-y: auto; /* Make preview scrollable */
   min-height: 0; /* Allow flex item to shrink */
   font-size: var(--step-1);  /* Increased base font size */
@@ -133,43 +132,43 @@
   letter-spacing: 0.3px;  /* Added slight letter spacing */
 }
 
-.preview h1 {
+.preview h1, .previewOnly.active h1 {
   font-size: var(--step-5);
   margin-bottom: 1em;
 }
 
-.preview h2 {
+.preview h2, .previewOnly.active h2 {
   font-size: var(--step-4);
   margin-bottom: 0.8em;
 }
 
-.preview h3 {
+.preview h3, .previewOnly.active h3 {
   font-size: var(--step-3);
   margin-bottom: 0.6em;
 }
 
-.preview p {
+.preview p, .previewOnly.active p {
   font-size: var(--step-1);
   color: #eee;  /* Lighter text color for better contrast */
   line-height: 1.8;
   margin-bottom: 1.2em;
 }
 
-.preview code {
+.preview code, .previewOnly.active code {
   font-size: var(--step-0);
   background-color: #2a2a2a;
   padding: 4px 8px;  /* Increased padding */
   border-radius: 4px;
 }
 
-.preview pre {
+.preview pre, .previewOnly.active pre {
   margin: 1.5em 0;  /* Added vertical margin */
   padding: 20px;  /* Increased padding */
   font-size: var(--step-0);
   line-height: 1.6;
 }
 
-.preview blockquote {
+.preview blockquote, .previewOnly.active blockquote {
   font-size: var(--step-1);
   border-left: 4px solid #2196f3;
   margin: 1.5em 0;
@@ -179,14 +178,14 @@
   border-radius: 0 4px 4px 0;
 }
 
-.preview ul {
-  list-style-type: disc; /* Ensure bullet points are displayed */
+.preview ul, .previewOnly.active ul {
+  list-style: none; /* Remove default bullets */
   margin: 1em 0;
   padding-left: 2em;
   color: var(--text-color); /* Use the text color for visibility */
 }
 
-.preview ol {
+.preview ol, .previewOnly.active ol {
   list-style-type: decimal; /* Ensure numbered lists are displayed */
   margin: 1em 0;
   padding-left: 2em;
@@ -194,11 +193,31 @@
 }
 
 .preview ul li,
-.preview ol li {
+.preview ol li,
+.previewOnly.active ul li,
+.previewOnly.active ol li {
+  position: relative;
   margin: 0.5em 0;
   line-height: 1.6;
   display: list-item; /* Ensure items are displayed as list items */
   color: var(--text-color); /* Use the text color for list text */
+}
+
+.preview ul li::before,
+.previewOnly.active ul li::before {
+  content: "❯";
+  position: absolute;
+  left: -1.5em;
+  color: var(--text-color);
+  font-size: 0.8em;
+}
+
+.preview ol li,
+.previewOnly.active ol li {
+  margin: 0.5em 0;
+  line-height: 1.6;
+  display: list-item;
+  color: var(--text-color);
 }
 
 .previewOnly {
