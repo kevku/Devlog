@@ -4,26 +4,26 @@
 .promptGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  /* Auto-fit items with a minimum width of 200px */
-  gap: 4.5em;
-  /* Space between items */
-  justify-items: stretch;
-  /* Ensure items stretch to fill available space */
-  padding: 16px;
-  /* Padding inside the container */
-  background-color: #f9f9f9;
-
+  gap: 2rem;
+  justify-items: center;
+  padding: 20px;
+  background-color: #1a1a1a;
   max-height: 85vh;
-  /* Adjust this value to the desired max height */
   overflow-y: auto;
-  /* Enable vertical scrolling */
   overflow-x: hidden;
-  /* Prevent horizontal overflow */
-
   margin-top: 20px;
   border-radius: 20px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
+.noPrompt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  color: #666;
+  font-size: var(--step-2);
+}
 
 /* Individual prompt item styled like a thumbnail */
 .prompt {

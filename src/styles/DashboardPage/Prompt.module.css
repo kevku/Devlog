@@ -2,58 +2,72 @@
 .prompt {
   position: relative;
   width: 240px;
-  /* Typical YouTube thumbnail width */
   height: 135px;
-  /* Aspect ratio 16:9 */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  /* Optional: rounded corners */
-  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 15px;
   margin: 10px;
   cursor: pointer;
   overflow: hidden;
-  /* Ensure content doesn't spill out */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* Align content vertically */
-  background-color: gray;
-  /* Optional: background color */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Optional: subtle shadow */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  /* Smooth hover effect */
-  
+  background-color: #2a2a2a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
 }
 
 .prompt:hover {
-  transform: scale(1.05);
-  /* Slight zoom effect */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  border-color: #666;
+  background-color: #333;
+}
+
+.promptTitle {
+  font-size: var(--step-0);
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.promptDescription {
+  font-size: var(--step--1);
+  color: #999;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .deleteButton {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 8px;
+  right: 8px;
   display: none;
-  background: red;
+  background: #ff4444;
   color: white;
   border: none;
   border-radius: 50%;
-  padding: 5px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+  opacity: 0.8;
+}
+
+.deleteButton:hover {
+  background: #ff0000;
+  opacity: 1;
 }
 
 .prompt:hover .deleteButton {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 h3 {
   font-size: 16px;
-  /* Adjust for smaller space */
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -62,7 +76,6 @@ h3 {
 
 p {
   font-size: 14px;
-  /* Adjust for smaller space */
   margin: 5px 0 0;
   overflow: hidden;
   text-overflow: ellipsis;
