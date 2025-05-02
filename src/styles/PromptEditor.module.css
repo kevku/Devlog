@@ -1,9 +1,10 @@
 .editorContainer {
   padding: 20px;
-  height: 100%;
+  height: calc(100vh - 80px); /* Account for header and padding */
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow: hidden; /* Prevent container from scrolling */
 }
 
 .titleInput {
@@ -65,6 +66,7 @@
   display: flex;
   flex-grow: 1;
   gap: 20px;
+  min-height: 0; /* Allow flex container to shrink */
   height: calc(100vh - 200px);
 }
 
@@ -79,6 +81,34 @@
   resize: none;
   outline: none;
   border-radius: 0 0 8px 8px;
+  overflow-y: auto; /* Make editor scrollable */
+  min-height: 0; /* Allow flex item to shrink */
+}
+
+.editor, .preview {
+  /* Webkit browsers (Chrome, Safari, newer Edge) */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #666;
+  }
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #444 #1a1a1a;
 }
 
 .split .editor {
@@ -91,40 +121,105 @@
   padding: 20px;
   background-color: #1a1a1a;
   border-radius: 0 0 8px 0;
-  overflow-y: auto;
+  overflow-y: auto; /* Make preview scrollable */
+  min-height: 0; /* Allow flex item to shrink */
+  font-size: var(--step-1);  /* Increased base font size */
+  line-height: 1.8;  /* Increased line height for better readability */
+  letter-spacing: 0.3px;  /* Added slight letter spacing */
 }
 
-.preview h1,
-.preview h2,
-.preview h3,
-.preview h4,
-.preview h5,
-.preview h6 {
-  margin-top: 0;
-  color: #fff;
+.preview h1 {
+  font-size: var(--step-5);
+  margin-bottom: 1em;
+}
+
+.preview h2 {
+  font-size: var(--step-4);
+  margin-bottom: 0.8em;
+}
+
+.preview h3 {
+  font-size: var(--step-3);
+  margin-bottom: 0.6em;
 }
 
 .preview p {
-  color: #ddd;
-  line-height: 1.6;
+  font-size: var(--step-1);
+  color: #eee;  /* Lighter text color for better contrast */
+  line-height: 1.8;
+  margin-bottom: 1.2em;
 }
 
 .preview code {
+  font-size: var(--step-0);
   background-color: #2a2a2a;
-  padding: 2px 6px;
+  padding: 4px 8px;  /* Increased padding */
   border-radius: 4px;
 }
 
 .preview pre {
-  background-color: #2a2a2a;
-  padding: 15px;
-  border-radius: 8px;
-  overflow-x: auto;
+  margin: 1.5em 0;  /* Added vertical margin */
+  padding: 20px;  /* Increased padding */
+  font-size: var(--step-0);
+  line-height: 1.6;
 }
 
 .preview blockquote {
+  font-size: var(--step-1);
   border-left: 4px solid #2196f3;
-  margin: 0;
-  padding-left: 15px;
+  margin: 1.5em 0;
+  padding: 0.8em 0 0.8em 1.5em;  /* Increased padding */
+  color: #bbb;  /* Lighter quote color */
+  background-color: #252525;  /* Subtle background for quotes */
+  border-radius: 0 4px 4px 0;
+}
+
+.preview ul {
+  list-style-type: disc; /* Ensure bullet points are displayed */
+  margin: 1em 0;
+  padding-left: 2em;
+  color: var(--text-color); /* Use the text color for visibility */
+}
+
+.preview ol {
+  list-style-type: decimal; /* Ensure numbered lists are displayed */
+  margin: 1em 0;
+  padding-left: 2em;
+  color: var(--text-color); /* Use the text color for visibility */
+}
+
+.preview ul li,
+.preview ol li {
+  margin: 0.5em 0;
+  line-height: 1.6;
+  display: list-item; /* Ensure items are displayed as list items */
+  color: var(--text-color); /* Use the text color for list text */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
   color: #888;
+  border: 1px solid #444;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 20px;
+  padding: 0;
+}
+
+.backButton:hover {
+  background-color: #333;
+  color: white;
 }

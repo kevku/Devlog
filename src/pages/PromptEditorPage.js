@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import styles from '../styles/PromptEditor.module.css';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -8,21 +8,60 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { 
   MdFormatBold, MdFormatItalic, MdFormatListBulleted, 
   MdFormatListNumbered, MdCode, MdLink, MdImage,
-  MdFormatQuote, MdPreview, MdTitle
+  MdFormatQuote, MdPreview, MdTitle, MdArrowBack
 } from 'react-icons/md';
 
 const PromptEditorPage = () => {
   const { promptId } = useParams();
+  const navigate = useNavigate();
   const [content, setContent] = useState('');
   const [title, setTitle] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [lastListType, setLastListType] = useState(null);
+  const [lastListTime, setLastListTime] = useState(0);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      const cursorPos = e.target.selectionStart;
+      const textBeforeCursor = content.substring(0, cursorPos);
+      const textAfterCursor = content.substring(cursorPos);
+      
+      // Check if the current line starts with a list marker
+      const lastLine = textBeforeCursor.split('\n').pop();
+      const bulletMatch = lastLine.match(/^(\s*)-\s+/);
+      const numberMatch = lastLine.match(/^(\s*)\d+\.\s+/);
+      
+      if (bulletMatch || numberMatch) {
+        e.preventDefault();
+        // If the line is empty except for the marker, remove the marker
+        if (lastLine.trim() === (bulletMatch?.[0] || numberMatch?.[0])?.trim()) {
+          const newText = textBeforeCursor.substring(0, textBeforeCursor.length - lastLine.length) + textAfterCursor;
+          setContent(newText);
+          return;
+        }
+        
+        const indent = (bulletMatch || numberMatch)[1];
+        const marker = bulletMatch ? `${indent}- ` : 
+          `${indent}${parseInt(numberMatch[0]) + 1}. `;
+        
+        const newText = textBeforeCursor + '\n' + marker + textAfterCursor;
+        setContent(newText);
+        
+        // Move cursor after the new marker
+        setTimeout(() => {
+          const newPos = cursorPos + 1 + marker.length;
+          e.target.setSelectionRange(newPos, newPos);
+        }, 0);
+      }
+    }
+  };
 
   const insertMarkdown = (type) => {
     const markdownSyntax = {
       bold: ['**', '**'],
       italic: ['_', '_'],
       heading: ['# ', ''],
-      bullet: ['- ', ''],
+      bullet: ['- ', ''], // Ensure there's a space after the dash
       number: ['1. ', ''],
       code: ['```\n', '\n```'],
       link: ['[', '](url)'],
@@ -30,6 +69,30 @@ const PromptEditorPage = () => {
       quote: ['> ', '']
     };
 
+    // Handle list type switching
+    if ((type === 'bullet' || type === 'number') && 
+        (Date.now() - lastListTime < 1000) && 
+        lastListType !== type && 
+        (lastListType === 'bullet' || lastListType === 'number')) {
+      // Convert existing list
+      const lines = content.split('\n');
+      const newContent = lines.map(line => {
+        if (type === 'bullet' && line.match(/^\d+\.\s/)) {
+          return line.replace(/^\d+\.\s/, '- ');
+        } else if (type === 'number' && line.match(/^-\s/)) {
+          const index = lines.indexOf(line) + 1;
+          return line.replace(/^-\s/, `${index}. `);
+        }
+        return line;
+      }).join('\n');
+      
+      setContent(newContent);
+      setLastListType(type);
+      setLastListTime(Date.now());
+      return;
+    }
+
+    // Normal markdown insertion
     const textarea = document.getElementById('editor');
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
@@ -56,17 +119,46 @@ const PromptEditorPage = () => {
         textarea.setSelectionRange(newCursorPos, newCursorPos + 4);
       }, 0);
     }
+
+    // Update list tracking
+    if (type === 'bullet' || type === 'number') {
+      setLastListType(type);
+      setLastListTime(Date.now());
+    } else {
+      setLastListType(null);
+    }
+  };
+
+  const preprocessMarkdown = (text) => {
+    // Fix bullet points that don't have proper spacing and ensure proper line breaks
+    return text
+      .replace(/^-(?!\s)/gm, '- ') // Add space after dash if missing
+      .replace(/^(\s*)-\s*([^\n]*)$/gm, '$1- $2') // Fix any malformed bullet points
+      .replace(/\n-\s/g, '\n- '); // Ensure proper line break before bullets
+  };
+
+  const handleBack = () => {
+    navigate('/dashboard');
   };
 
   return (
     <div className={styles.editorContainer}>
-      <input 
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Enter title..."
-        className={styles.titleInput}
-      />
+      <div className={styles.header}>
+        <button 
+          onClick={handleBack} 
+          className={styles.backButton}
+          title="Back to Dashboard"
+        >
+          <MdArrowBack />
+        </button>
+        <input 
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter title..."
+          className={styles.titleInput}
+        />
+      </div>
       
       <div className={styles.toolbar}>
         <button onClick={() => insertMarkdown('heading')}><MdTitle /></button>
@@ -94,6 +186,7 @@ const PromptEditorPage = () => {
           id="editor"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Write your content here... (Markdown supported)"
           className={styles.editor}
         />
@@ -121,7 +214,7 @@ const PromptEditorPage = () => {
                 }
               }}
             >
-              {content}
+              {preprocessMarkdown(content)}
             </ReactMarkdown>
           </div>
         )}
