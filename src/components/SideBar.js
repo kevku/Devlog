@@ -27,14 +27,11 @@ const Sidebar = ({ username }) => {
 
   return (
     <div className={`${styles.sidebar} ${activeSidebar ? styles.active : ''}`}>
-      <div className='top'>
-        <div className='logo'>
-          <MdPentagon className={styles.icons} />
-          <span>Devlog</span>
-        </div>
+      <div className={styles.logo}>
+        <MdPentagon className={styles.icons} />
+        <span>Devlog</span>
       </div>
-      <div className='user'>
-        {/* Profile Image */}
+      <div className={styles.user}>
         <Link to="/profile">
           <p>{username}</p>
         </Link>
