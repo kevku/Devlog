@@ -38,32 +38,56 @@
   line-height: 1.4;
 }
 
-.deleteButton {
+.buttonContainer {
   position: absolute;
   top: 8px;
   right: 8px;
   display: none;
-  background: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: background-color 0.2s ease;
-  opacity: 0.8;
+  gap: 8px;
 }
 
-.deleteButton:hover {
-  background: #ff0000;
-  opacity: 1;
+.prompt:hover .buttonContainer {
+  display: flex;
 }
 
-.prompt:hover .deleteButton {
+.iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+  background-color: transparent;
+}
+
+.iconButton:hover {
+  transform: scale(1.1);
+}
+
+.editButton {
+  color: #aaa;
+}
+
+.editButton:hover {
+  color: #fff;
+  background-color: #2196f3;
+}
+
+.deleteButton {
+  color: #aaa;
+}
+
+.deleteButton:hover {
+  color: #fff;
+  background-color: #ff4444;
+}
+
+.deleteButton {
+  position: static;
 }
 
 h3 {
