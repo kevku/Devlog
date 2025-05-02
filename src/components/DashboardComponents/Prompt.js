@@ -1,15 +1,22 @@
 import { MdDelete, MdEdit } from "react-icons/md";
 import styles from "../../styles/DashboardPage/Prompt.module.css";
+import { useNavigate } from "react-router-dom";
 
-const Prompt = ({ prompt, onClick, onDelete }) => {
+const Prompt = ({ prompt, onDelete }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/prompt/${prompt.id}`);
+  };
+
   return (
-    <div className={styles.prompt} onClick={() => onClick(prompt.id)}>
+    <div className={styles.prompt} onClick={handleClick}>
       <div className={styles.buttonContainer}>
         <button
           className={`${styles.iconButton} ${styles.editButton}`}
           onClick={(e) => {
             e.stopPropagation();
-            // Edit functionality will be added later
+            handleClick();
           }}
         >
           <MdEdit />

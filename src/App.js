@@ -20,6 +20,7 @@ import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import Layout from './components/Layout';
 import PrivateLayout from './components/PrivateLayout';
+import PromptEditorPage from './pages/PromptEditorPage'; // Import the new PromptEditorPage
 
 function App() {
   const [user, setUser] = useState(null); // Track the current user
@@ -67,6 +68,10 @@ function App() {
         {
           path: 'dashboard',
           element: <PrivateRoute user={user}><PrivateLayout user={user}><DashboardPage /></PrivateLayout></PrivateRoute>,
+        },
+        {
+          path: 'prompt/:promptId',
+          element: <PrivateRoute user={user}><PrivateLayout user={user}><PromptEditorPage /></PrivateLayout></PrivateRoute>,
         },
         {
           path: 'bookmarked',
