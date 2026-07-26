@@ -1,41 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase-config.js';
-import { onAuthStateChanged } from 'firebase/auth';
+import { AuthContext } from '../context/AuthProvider';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { useSidebar } from './SideBarContext.js';
 
 import styles from '../styles/Header.module.css';
 
 const Header = () => {
-  const [user, setUser] = useState(null);
+  const { user } = useContext(AuthContext);
   const { toggleSidebar } = useSidebar();
-
-  // Listen to authentication state
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-
-    return () => unsubscribe(); // Cleanup on unmount
-  }, []);
 
   return (
     <header className={styles}>
-      {/* If the user is logged in, show profile and logout, else show login and register */}
       {user ? (
         <div>
-          {/* Go Back to Dashboard */}
           <GiHamburgerMenu onClick={toggleSidebar} />
         </div>
       ) : (
         <div>
-          {/* Logo or Home Link */}
           <Link to="/">
             <h2>Devlog</h2>
           </Link>
           <nav>
-            {/* Public Route - Login and Register */}
             <Link to="/login">
               <button>Login</button>
             </Link>

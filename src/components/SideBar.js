@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import styles from '../styles/Sidebar.module.css'; 
-import { Link } from 'react-router-dom';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase-config'; 
+import styles from '../styles/Sidebar.module.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase-config';
 import { MdDashboard } from "react-icons/md";
 import { MdPentagon } from "react-icons/md";
 import { MdFolder } from "react-icons/md";
@@ -13,15 +12,16 @@ import { RiLogoutBoxFill } from "react-icons/ri";
 import { useSidebar } from './SideBarContext';
 
 const Sidebar = ({ username }) => {
-  const { activeSidebar } = useSidebar(); // Access sidebar state
-  // Handle user sign out
+  const { activeSidebar } = useSidebar();
+  const navigate = useNavigate();
+
   const handleLogout = async (e) => {
-    e.preventDefault(); // Prevents the default behavior of the <a> tag
-    try {
-      await signOut(auth);
-      // Optionally, you can redirect the user or do something after logout
-    } catch (error) {
+    e.preventDefault();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
       console.error('Error signing out:', error);
+    } else {
+      navigate('/login');
     }
   };
 
@@ -34,7 +34,6 @@ const Sidebar = ({ username }) => {
         </div>
       </div>
       <div className='user'>
-        {/* Profile Image */}
         <Link to="/profile">
           <p>{username}</p>
         </Link>

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase-config.js'; 
 import { useNavigate } from 'react-router-dom';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { supabase } from '../supabase-config.js';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -14,26 +12,24 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
 
-    try {
-      // Sign in with email and password
-      await signInWithEmailAndPassword(auth, email, password);
-      // Redirect to dashboard or main page after successful login
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      setError(error.message);
+    } else {
       navigate('/dashboard');
-    } catch (err) {
-      setError(err.message);
     }
   };
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      // User info and token available in result
-      console.log(result.user);
-      navigate('/dashboard');
-    } catch (error) {
-      setError(error.message);
-    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) setError(error.message);
+    // No navigate() here — the browser is about to leave this page entirely
   };
 
   return (

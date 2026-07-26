@@ -1,54 +1,55 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom'; // Import Navigate for redirection
-import { doc, getDoc } from 'firebase/firestore';
-import { firestore } from '../firebase-config'; // Import your Firestore instance
+import { Navigate } from 'react-router-dom';
+import { supabase } from '../supabase-config';
 import Sidebar from './SideBar';
 import styles from '../styles/PrivateLayout.module.css';
 import { useSidebar } from './SideBarContext';
 
-const PrivateLayout = ({ user, children }) => { // Accept user as a prop
-  const [loading, setLoading] = useState(true); // State to manage loading
-  const [usernameExists, setUsernameExists] = useState(true); // State to check if username exists
-  const [username, setUsername] = useState(''); // State to store the username
+const PrivateLayout = ({ user, children }) => {
+  const [loading, setLoading] = useState(true);
+  const [usernameExists, setUsernameExists] = useState(true);
+  const [username, setUsername] = useState('');
   const { activeSidebar } = useSidebar();
+
   useEffect(() => {
     const checkUsernameExists = async () => {
-      if (user && user.uid) { // Check if user and uid are available
-        const userDocRef = doc(firestore, 'users', user.uid); // Reference to the user document
-        const userDocSnap = await getDoc(userDocRef); // Fetch the user document
+      if (user && user.id) {
+        const { data, error } = await supabase
+          .from('users')
+          .select('username')
+          .eq('id', user.id)
+          .maybeSingle();
 
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data(); // Use const here for userData
-          setUsername(userData.username || ''); // Set the username if it exists
-          setUsernameExists(!!userData.username); // Check if username exists
+        if (error) {
+          setUsernameExists(false);
+        } else if (data && data.username) {
+          setUsername(data.username);
+          setUsernameExists(true);
         } else {
-          console.log('No user document found.');
-          setUsernameExists(false); // If the document doesn't exist, set usernameExists to false
+          setUsernameExists(false);
         }
       } else {
-        setUsernameExists(false); // If no user is authenticated, consider username as not existing
+        setUsernameExists(false);
       }
-      setLoading(false); // Mark loading as complete
+      setLoading(false);
     };
 
-    checkUsernameExists(); // Call the fetch function
+    checkUsernameExists();
   }, [user]);
 
-  // While loading, show a loading indicator
   if (loading) {
-    return <div>Loading...</div>; // Or your preferred loading component
+    return <div>Loading...</div>;
   }
 
-  // If username doesn't exist, navigate to SetUsernamePage
   if (!usernameExists) {
-    return <Navigate to="/set-username" />; // Redirect to SetUsernamePage if username is null
+    return <Navigate to="/set-username" />;
   }
 
   return (
     <div className="private-layout">
       <Sidebar username={username} />
       <div className={`${styles.mainContent} ${activeSidebar ? styles.withSidebar : styles.noSidebar}`}>
-        { children }
+        {children}
       </div>
     </div>
   );

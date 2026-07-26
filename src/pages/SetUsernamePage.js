@@ -1,58 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, setDoc, doc, getDoc } from 'firebase/firestore';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth'; // Import Firebase Auth
-import { firestore } from '../firebase-config';
+import { supabase } from '../supabase-config';
+import { AuthContext } from '../context/AuthProvider';
 
 const SetUsernamePage = () => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const auth = getAuth(); // Initialize Firebase Auth
-  const user = auth.currentUser; // Get the current user
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    // Check if the user is logged in
     if (!user) {
-      navigate('/login'); // Redirect to the login page if not authenticated
-    } else {
-      // Check if the username is already set
-      const checkUsername = async () => {
-        const userDocRef = doc(firestore, 'users', user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-          if (userData.username) {
-            // If username is already set, navigate to the dashboard
-            navigate('/dashboard');
-          }
-        }
-      };
-
-      checkUsername(); // Call the check function
+      navigate('/login');
+      return;
     }
+
+    const checkUsername = async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('username')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!error && data && data.username) {
+        navigate('/dashboard');
+      }
+    };
+
+    checkUsername();
   }, [user, navigate]);
 
-  // Check if username is taken
   const isUsernameTaken = async (username) => {
-    const q = query(collection(firestore, 'users'), where('username', '==', username)); // Use firestore instead of storage
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty; // Return true if username is taken
+    const { data, error } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', username);
+
+    if (error) {
+      console.error('Error checking username:', error);
+      return false;
+    }
+    return data.length > 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Validate username (only alphanumeric characters)
     if (!/^[a-zA-Z0-9]+$/.test(username)) {
       setError('Username can only contain alphanumeric characters.');
       return;
     }
 
-    // Check if username is taken
     setLoading(true);
     const taken = await isUsernameTaken(username);
     if (taken) {
@@ -62,10 +62,12 @@ const SetUsernamePage = () => {
     }
 
     try {
-      // Save the username to Firestore
-      const userRef = doc(firestore, 'users', user.uid); // Use firestore for user reference
-      await setDoc(userRef, { username }, { merge: true }); // Merge the new username with existing data
-      navigate('/dashboard'); // Redirect to the dashboard after setting the username
+      const { error } = await supabase
+        .from('users')
+        .upsert({ id: user.id, username }, { onConflict: 'id' });
+
+      if (error) throw error;
+      navigate('/dashboard');
     } catch (error) {
       setError('Error setting username. Please try again.');
       console.error('Error setting username:', error);
